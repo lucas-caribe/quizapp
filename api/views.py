@@ -4,10 +4,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from random import choices
+from random import sample
 
 from .serializers import AnswerSerializer, CategorySerializer, QuestionSerializer
 from .models import Answer, Category, Question
+
+MAX_QUESTIONS = 5
 
 @api_view(['GET'])
 @csrf_exempt
@@ -34,7 +36,7 @@ def get_questions(request):
   serializer = QuestionSerializer(questions, many=True)
   
   if len(serializer.data) > 5:
-    random_questions = choices(serializer.data, k=5)
+    random_questions = sample(serializer.data, MAX_QUESTIONS)
   else:
     random_questions = serializer.data
 
@@ -58,12 +60,14 @@ def add_question(request):
   payload = request.data
   try:
     category = Category.objects.get(id=payload['category_id'])
+    
     question = Question.objects.create(
       content=payload['content'],
       score=payload['score'],
       level=payload['level'],
       category_id=category,
     )
+
     serializer = QuestionSerializer(question)
     
     for answer in payload['answers']:
@@ -77,4 +81,8 @@ def add_question(request):
   except ObjectDoesNotExist as e:
         return JsonResponse({'error': str(e)}, safe=False, status=status.HTTP_404_NOT_FOUND)
   except Exception as e:
-      return JsonResponse({'error': 'Something went wrong'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+      return JsonResponse(
+        {'error': 'Something went wrong'}, 
+        safe=False, 
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+      )
