@@ -1,3 +1,17 @@
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
 
-# Create your models here.
+class Category(models.Model):
+  name = models.CharField(max_length=150)
+
+class Question(models.Model):
+  content = models.CharField(max_length=500)
+  score = models.PositiveSmallIntegerField()
+  level = models.PositiveSmallIntegerField()
+  category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+class Answer(models.Model):
+  content = models.CharField(max_length=500)
+  correct = models.BooleanField()
+  question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
