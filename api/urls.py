@@ -6,4 +6,5 @@ urlpatterns = [
   path('getcategories', views.get_categories),
   path('getquestions', views.get_questions),
   path('getanswers/<int:question_id>', views.get_answers),
+  path('addquestion', views.add_question),
 ]
