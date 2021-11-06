@@ -1,10 +1,9 @@
-from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 from . import views
 
-urlpatterns = [
-  path('welcome', views.welcome),
-  path('getcategories', views.get_categories),
-  path('getquestions', views.get_questions),
-  path('getanswers/<int:question_id>', views.get_answers),
-  path('addquestion', views.add_question),
-]
+router = DefaultRouter()
+router.register(r'categories', views.CategoryView)
+router.register(r'questions', views.QuestionView)
+router.register(r'answers', views.AnswerView)
+
+urlpatterns = router.urls
